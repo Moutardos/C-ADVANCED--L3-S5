@@ -2,7 +2,6 @@ TARGET = lib_img.so
 
 CC = gcc 
 CFLAGS = -Wall -pedantic -ansi -fpic
-CPPFLAGS = -Iinclude -MMD -MP 
 LDFLAGS = -lm -O2 -g
 LBFLAGS = -shared -g
 SRCDIR := src
@@ -13,21 +12,22 @@ LIBDIR = lib
 EXE := $(TARGET)
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
-LIB =  $(LIB_PATH)$(EXEC)
+LIB :=  $(LIBDIR)/$(EXE)
 
 
-$(EXE): $(OBJ) | $(BINDIR)
-	$(CC) $(LDFLAGS) $^ $(OBJDIR) -o $@ 
+
 
 $(LIB):	$(OBJ)
+	mkdir -p $(LIBDIR)
 	$(CC) $(LBFLAGS) -o $@ $<
 
-
+$(EXE): $(OBJ) | $(BINDIR)
+	$(CC) $(LDFLAGS) $^  -o $@ 
+	
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
-	$(CC) $(CPPFLAGS)  $(CFLAGS)  -c $< -o $@
+	$(CC)   $(CFLAGS)  -c $< -o $@
 
 $(OBJDIR):
 	mkdir -p $@
 
-$(LIBDIR):
-	mkdir -p $@
+
